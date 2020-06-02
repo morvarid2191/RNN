@@ -47,4 +47,44 @@ test_ind=len(df)-test_size
 train=df.iloc[:test_ind]
 test=df.iloc[test_ind:]
 
+#now scale the data
+from sklearn.preprocessing import MinMaxScaler
+scaler=MinMaxScaler()
+scaler.fit(train)
+#MinMaxScaler(copy=True, feature_range=(0, 1))
 
+scaled_train=scaler.transform(train)
+scaled_test=scaler.transform(test)
+
+# create time series generator
+from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
+length=12
+generator=TimeseriesGenerator(scaled_train, scaled_train,length=length,batch_size=1)
+X,y=generator[0]
+
+#create the model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense,LSTM
+n_features=1
+model=Sequential()
+model.add(LSTM(100,activation='relu',input_shape=(length,n_features)))
+model.add(Dense(1))
+model.compile(optimizer='adam',loss='mse')
+
+model.summary()
+#Model: "sequential_3"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+lstm_2 (LSTM)                (None, 100)               40800     
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 101       
+=================================================================
+Total params: 40,901
+Trainable params: 40,901
+Non-trainable params: 0
+
+from tensorflow.keras.callbacks import EarlyStopping
+early_stop=EarlyStopping(monitor='val_loss',patience=2)
+validation_generator=TimeseriesGenerator(scaled_train, scaled_train,length=length,batch_size=1)
+model.fit_generator(generator,epochs=20,validation_data=validation_generator,callbacks=[early_stop])
