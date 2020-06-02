@@ -1,0 +1,50 @@
+import numpy as np
+import pandas as pd
+%matplotlib inline
+import matplotlib.pyplot as plt
+
+pd.read_csv(r"C:\Users\morva\Documents\Python Scripts\RSCCASN.csv")
+#DATE	RSCCASN
+0	1/1/1992	6938
+1	2/1/1992	7524
+2	3/1/1992	8475
+3	4/1/1992	9401
+4	5/1/1992	9558
+...	...	...
+329	6/1/2019	21123
+330	7/1/2019	21714
+331	8/1/2019	23791
+332	9/1/2019	19695
+333	10/1/2019	21113
+334 rows × 2 columns
+
+pd.read_csv(r"C:\Users\morva\Documents\Python Scripts\RSCCASN.csv",parse_dates=True,index_col='DATE')
+#RSCCASN
+DATE	
+1992-01-01	6938
+1992-02-01	7524
+1992-03-01	8475
+1992-04-01	9401
+1992-05-01	9558
+...	...
+2019-06-01	21123
+2019-07-01	21714
+2019-08-01	23791
+2019-09-01	19695
+2019-10-01	21113
+334 rows × 1 columns
+
+df.columns=['Sales']
+df.plot(figsize=(12,8))
+#<matplotlib.axes._subplots.AxesSubplot at 0x1a4638d4b48>
+
+len(df)
+#334
+
+test_size=18
+
+test_ind=len(df)-test_size
+train=df.iloc[:test_ind]
+test=df.iloc[test_ind:]
+
+
